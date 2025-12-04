@@ -348,9 +348,15 @@ body.theme-aurora {
 
 
 /* AUTO TEXT COLOR IN LIGHT THEME — PERFECT FIX */
-body.theme-light,
-body.theme-light * {
-  color: #0f0f1a !important;   /* Deep dark purple-black, perfect for light bg */
+/* Light theme base color without overriding everything */
+body.theme-light {
+  color: #0f0f1a;
+}
+
+/* (Optional) choose specific elements to recolor instead of `*` */
+body.theme-light .main-title,
+body.theme-light .nav-link {
+  color: #0f0f1a;
 }
 
 body.theme-light .text-white,
@@ -1419,4 +1425,5 @@ filter: brightness(0.9) contrast(1.1) saturate(1.4);
   max-height: 180px;
   overflow-y: auto;
 }
+
 
