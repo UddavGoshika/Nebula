@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nebula — Your AI Workspace from 2030</title>
+    <link rel="icon" type="image/x-icon" href="rapid.ico">
+
+
+  <!-- Tailwind CDN (no build step) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { inter: ['Inter', 'ui-sans-serif', 'system-ui'] },
+          colors: {
+            nebula: {
+              50:'#f6f4ff',100:'#ece9ff',200:'#d8d3ff',300:'#b8adff',
+              400:'#9a87ff',500:'#7b5cff',600:'#6343e6',700:'#4d33b8',
+              800:'#392789',900:'#281c63'
+            }
+          },
+          boxShadow: {
+            glass: '0 8px 32px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06)'
+          }
+        }
+      }
+    }
+  </script>
+
+<!-- Lenis Smooth Scroll + Page Transitions -->
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/bundles/lenis.umd.js"></script>
+<style>
+/* FORCE OVERRIDE – makes motion 10× smoother */
+html.lenis { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+
+.page {
+  opacity: 0 !important;
+  transform: translateY(30px) !important;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.page.active {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+</style>
+
+
+
+
+
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/ui/styles.css">
+  <!-- Chart.js, Marked (Markdown), DOMPurify (sanitize) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+
+
+
+  <!-- Base styles -->
+
+</head>
+<body class="overflow-x-hidden">
+<div id="nebulaToastPortal" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none"></div>
+  <!-- Sticky Nav -->
+  <nav class="fixed top-4 inset-x-0 z-50">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="glass rounded-2xl px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <svg width="22" height="22" viewBox="0 0 24 24" class="text-nebula-300"><defs/><path fill="currentColor" d="M12 2l2.39 4.85L20 8l-4 3.9L17 18l-5-2.6L7 18l1-6.1L4 8l5.61-1.15L12 2z"/></svg>
+          <button class="font-semibold tracking-wide" id="nebu" onclick="show('home')">Nebula</button>
+        </div>
+        <div class="flex items-center gap-1 text-sm">
+          <button class="px-3 py-1.5 rounded-lg nav-link hover:text-nebula-200" onclick="show('home')">Home</button>
+          <button class="px-3 py-1.5 rounded-lg nav-link hover:text-nebula-200" onclick="show('upload')">Upload</button>
+          <button class="px-3 py-1.5 rounded-lg nav-link hover:text-nebula-200" onclick="show('chat')">Chat</button>
+          <button class="px-3 py-1.5 rounded-lg nav-link hover:text-nebula-200" onclick="show('dash')">Dashboard</button>
+          <!-- <button class="px-3 py-1.5 rounded-lg nav-link hover:text-nebula-200" onclick="show('login')">Login</button> -->
+          <!-- Dynamic Auth Button - Replaces Login/Profile automatically -->
+<div id="authNavContainer" class="flex items-center gap-3">
+  <!-- This will be replaced by JS on page load -->
+  <button id="loginNavBtn" class="px-3 py-1.5 rounded-lg nav-link hover:text-nebula-200" onclick="show('login')">
+    Login
+  </button>
+</div>
+          <button class="ml-1 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15" onclick="openSettings()">⚙️</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Subtle Star Sparkles on Mouse Move (30–40 tiny particles) -->
+<div id="sparkles"></div>
+
+<style>
+#sparkles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.sparkle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: #e0d4ff;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #a78bfa;
+  pointer-events: none;
+  animation: sparkleFade 1.2s ease-out forwards;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes sparkleFade {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0) translateY(0);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) translateY(-10px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.6) translateY(-30px);
+  }
+}
+</style>
+
+<script>
+// Subtle sparkling stars (30–40 particles) on mouse move
+let lastSparkle = 0;
+
+// Beautiful Nebula color palette
+const colors = [
+  '#e0d4ff',  // Soft lavender
+  '#c8b3ff',  // Light purple
+  '#a78bfa',  // Nebula purple
+  '#9580ff',  // Deep violet
+  '#7b5cff',  // Main Nebula
+  '#b19fff',  // Soft violet
+  '#d4bbff',  // Dreamy lilac
+  '#c0a8ff',
+  'blue',
+  'skyblue',
+  'pink',
+  'yellow',
+  'orange',
+  'green'  // Pastel glow
+];
+
+document.addEventListener('mousemove', (e) => {
+  const now = Date.now();
+  if (now - lastSparkle < 90) return;
+  lastSparkle = now;
+
+  const count = Math.floor(Math.random() * 2)+1; // 25–37 particles
+
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      const sparkle = document.createElement('div');
+      sparkle.className = 'sparkle';
+
+      // Random offset around cursor
+      const offsetX = (Math.random() - 0.5) * 60;
+      const offsetY = (Math.random() - 0.5) * 60;
+      sparkle.style.left = (e.clientX + offsetX) + 'px';
+      sparkle.style.top = (e.clientY + offsetY) + 'px';
+
+      // Random size (2–4px)
+      const size = Math.random() * 2 + 1;
+      sparkle.style.width = size + 'px';
+      sparkle.style.height = size + 'px';
+
+      // Random color from palette
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      sparkle.style.background = randomColor;
+      sparkle.style.boxShadow = `0 0 8px ${randomColor}, 0 0 16px ${randomColor}60`;
+
+      // Random animation timing
+      sparkle.style.animationDelay = (Math.random() * 0.3) + 's';
+      sparkle.style.animationDuration = (0.8 + Math.random() * 0.6) + 's';
+
+      document.getElementById('sparkles').appendChild(sparkle);
+
+      // Remove after animation
+      setTimeout(() => sparkle.remove(), 500);
+    }, i * 10);
+  }
+});
+
+document.addEventListener('click', (e) => {
+  // Same gorgeous Nebula color palette
+  const colors = [
+    '#e0d4ff', '#c8b3ff', '#a78bfa', '#9580ff',
+    '#7b5cff', '#b19fff', '#d4bbff', '#c0a8ff','#c0a8ff',
+  'blue',
+  'skyblue',
+  'pink',
+  'yellow',
+  'orange',
+  'green'
+  ];
+
+  for (let i = 0; i < 40; i++) {
+    setTimeout(() => {
+      const s = document.createElement('div');
+      s.className = 'sparkle';
+
+      // Shoot out in a perfect circle
+      const angle = Math.random() * Math.PI * 2;
+      const force = Math.random() * 90 + 50; // Slightly stronger burst
+
+      s.style.left = (e.clientX + Math.cos(angle) * force) + 'px';
+      s.style.top = (e.clientY + Math.sin(angle) * force) + 'px';
+
+      // Random size
+      const size = Math.random() * 3 + 2;
+      s.style.width = s.style.height = size + 'px';
+
+      // Random color + matching glow
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      s.style.background = color;
+      s.style.boxShadow = `0 0 10px ${color}, 0 0 20px ${color}80`;
+
+      // Slightly longer/faster animation for burst feel
+      s.style.animationDuration = (0.9 + Math.random() * 0.7) + 's';
+      s.style.animationDelay = (Math.random() * 0.2) + 's';
+
+      document.getElementById('sparkles').appendChild(s);
+
+      // Remove after animation
+      setTimeout(() => s.remove(), 2000);
+    }, i * 12);
+  }
+});
+
+
+
+
+
+</script>
+
+
+
+
+  <!-- Main -->
+  <main class="max-w-6xl mx-auto px-4 pt-28 pb-20">
+
+    <!-- HOME -->
+    <section id="home" class="page active">
+
+<!-- 🌌 Particle Globe Section -->
+
+      <div class="text-center">
+        <h1 class="text-4xl md:text-5xl font-bold tracking-tight">
+<div style="text-align:center;padding-left:280px; margin-left:150px;margin-bottom:10px;" class="bannerimg">
+
+        <img src="dd.png" alt="Girl in a jacket" id="orbb" width="250" height="100">
+                <!-- <div id="particle-globe"></div> -->
+
+          <div class="sparkles"></div>
+
+          </div>
+
+          <div class="hero-parallax">
+            <!-- <h1 class="layer" data-depth="0.2">Nebula</h1> -->
+                   <p class="layer shine-text" data-depth="0.2">Nebula — Your AI Workspace from 2030</p></h1>
+
+      
+
+            
+          </div>
+
+
+          <!-- Nebula — <span class="text-nebula-300">Your Company Assistant</span> -->
+        </h1>
+        <p class="mt-3 text-white/70 max-w-2xl mx-auto text-center">
+          A sleek, single-file RAG console for uploading documents, chatting with retrieval, and monitoring system health.
+        </p>
+        <div class="mt-6 flex justify-center gap-3">
+          <button class="px-4 py-2 rounded-lg bg-nebula-600 hover:bg-nebula-500 shadow-glass" onclick="show('upload')">📄 Upload</button>
+          <button class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/10" onclick="show('chat')">✉️ Chat</button>
+          <button class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/10" onclick="show('dash')">📊 Dashboard</button>
+
+        </div>
+
+        <!-- hero visual -->
+        <div class="relative mt-12">
+          <div class="glass rounded-3xl p-6 md:p-10">
+            <div class="grid md:grid-cols-3 gap-6">
+              <div class="text-left">
+                <div class="text-sm uppercase tracking-wider text-white/60">RAG Stack</div>
+                <div class="mt-2 text-lg">Hybrid Search (FAISS + BM25)</div>
+                <div class="text-white/60 text-sm">Cosine re-rank • Citations</div>
+              </div>
+              <div class="text-left">
+                <div class="text-sm uppercase tracking-wider text-white/60">Chat</div>
+                <div class="mt-2 text-lg">Markdown, code blocks, typing</div>
+                <div class="text-white/60 text-sm">Local history</div>
+              </div>
+              <div class="text-left">
+                <div class="text-sm uppercase tracking-wider text-white/60">Ops</div>
+                <div class="mt-2 text-lg">Health, files, charts</div>
+                <div class="text-white/60 text-sm">One file, prod polish</div>
+              </div>
+            </div>
+          </div>
+          <div class="absolute -inset-x-8 -inset-y-8 pointer-events-none -z-10 blur-3xl opacity-40"
+               style="background: radial-gradient(600px 300px at 20% 20%, rgba(124,58,237,.45), transparent),
+                        radial-gradient(800px 400px at 80% 0%, rgba(56,189,248,.35), transparent),
+                        radial-gradient(700px 500px at 20% 100%, rgba(244,63,94,.30), transparent);">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- UPLOAD -->
+    <section id="upload" class="page">
+      <div class="grid gap-6 md:grid-cols-3">
+        <div class="md:col-span-2 glass rounded-2xl p-5">
+          <h2 class="text-xl font-semibold">Upload documents</h2>
+          <p class="text-sm text-white/70">PDF, DOCX, Images, CSV, PPTX, Web, TXT. Drag & drop or browse.</p>
+
+          <div id="dropzone" class="mt-4 border border-white/15 border-dashed rounded-2xl p-10 text-center hover:bg-white/5 transition cursor-pointer">
+            <input id="fileInput" type="file" multiple class="hidden">
+            <p class="text-white/80">Drag files here, or <span id="browseLink" class="text-nebula-300 underline">browse</span></p>
+            <div id="uploadProgress" class="mt-4 text-sm text-white/60"></div>
+            <div id="uploadBar" class="w-full h-2 bg-white/10 rounded-lg overflow-hidden mt-3 hidden">
+              <div id="uploadBarFill" class="h-full bg-nebula-500" style="width:0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass rounded-2xl p-5">
+          <h3 class="text-lg font-medium">Uploaded files</h3>
+          <ul id="fileList" class="mt-3 text-sm text-white/80 space-y-1 max-h-[280px] overflow-auto"></ul>
+          <div class="mt-4 flex gap-2">
+            <button id="refreshFilesBtn" class="px-3 py-1.5 rounded-md bg-white/10 hover:bg-white/20 border border-white/10">Refresh</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+<!-- The video -->
+<!-- <video autoplay muted loop id="myVideo">
+  <source src="/ui/ta.mp4" type="video/mp4">
+</video> -->
+
+
+<video id="bg-video" autoplay muted loop playsinline>
+  <source src="/ui/ta.mp4" type="video/mp4" />
+</video>
+
+ <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+
+
+
+<!-- LOGIN SECTION -->
+<section id="login" class="page">
+  <div class="max-w-md mx-auto glass rounded-2xl p-6 mt-12">
+    <h2 class="text-2xl font-semibold text-center">Welcome to Nebula</h2>
+    <p class="text-sm text-white/70 text-center mt-1 mb-6">Sign in or create an account to continue</p>
+
+    <div id="authTabs" class="flex justify-center gap-4 mb-6">
+      <button id="tabLogin" class="font-medium text-nebula-300 border-b-2 border-nebula-400 pb-1" onclick="setAuthMode('login')">
+        Sign In
+      </button>
+      <button id="tabRegister" class="font-medium text-white/70 pb-1" onclick="setAuthMode('register')">
+        Sign Up
+      </button>
+    </div>
+
+    <div id="authFields">
+      <input id="authUser" class="w-full bg-white/10 border border-white/15 rounded-lg px-3 py-2 mb-2" placeholder="Username">
+      <input id="authPass" type="password" class="w-full bg-white/10 border border-white/15 rounded-lg px-3 py-2 mb-4" placeholder="Password">
+    </div>
+
+
+
+
+    <button id="authActionBtn" class="w-full mb-3 px-4 py-2 rounded-lg bg-nebula-600 hover:bg-nebula-500">
+      Sign In
+    </button>
+
+    <div class="flex items-center my-3">
+      <div class="flex-grow h-px bg-white/10"></div>
+      <div class="mx-2 text-xs text-white/50">or</div>
+      <div class="flex-grow h-px bg-white/10"></div>
+    </div>
+
+    <!-- Sign in with Google -->
+    <button class="w-full px-4 py-2 rounded-lg bg-white text-gray-800 font-medium hover:bg-gray-200 flex items-center justify-center gap-2" onclick="googleAuth()">
+      <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-5 h-5" alt=""> Sign in with Google
+    </button>
+
+    <div id="authMsg" class="mt-4 text-sm text-white/60 text-center"></div>
+  </div>
+</section>
+
+
+<!-- <section id="account" class="page">
+
+
+
+</section> -->
+
+
+<!-- ACCOUNT PAGE (ChatGPT Style) -->
+<!-- <section id="account" class="page hidden">
+  <div class="max-w-4xl mx-auto px-4 py-12">
+    <h1 class="text-3xl font-bold text-center mb-8">My Account</h1>
+    
+    <div class="glass rounded-2xl p-8 max-w-2xl mx-auto">
+      <div class="flex items-center gap-6 mb-8">
+        <div id="accountAvatar" class="w-24 h-24 rounded-full bg-gradient-to-br from-nebula-600 to-nebula-800 flex items-center justify-center text-4xl font-bold text-white border-4 border-white/20 shadow-2xl">
+          A
+        </div>
+        <div>
+          <h2 id="accountName" class="text-2xl font-semibold">User Name</h2>
+          <p id="accountEmail" class="text-white/70">user@example.com</p>
+          <div class="mt-2">
+            <span class="px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-medium">Pro Plan</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="flex justify-between items-center py-4 border-b border-white/10">
+          <div>
+            <div class="font-medium">Email Verified</div>
+            <div class="text-sm text-white/60">Connected with Google</div>
+          </div>
+          <span class="text-green-400 text-2xl">✓</span>
+        </div>
+        <div class="flex justify-between items-center py-4 border-b border-white/10">
+          <div>
+            <div class="font-medium">Documents Uploaded</div>
+            <div class="text-sm text-white/60">Lifetime</div>
+          </div>
+          <span class="text-nebula-300 font-bold">42</span>
+        </div>
+        <div class="flex justify-between items-center py-4">
+          <div>
+            <div class="font-medium">Member Since</div>
+            <div class="text-sm text-white/60">Joined</div>
+          </div>
+          <span class="text-white/80">November 2025</span>
+        </div>
+      </div>
+
+      <button onclick="logout()" class="w-full mt-8 px-6 py-3 rounded-xl bg-red-600 hover:bg-red-700 font-medium transition">
+        Sign Out
+      </button>
+    </div>
+  </div>
+</section> -->
+
+
+
+<section id="account" class="page hidden">
+  <div class="max-w-5xl mx-auto px-4 py-12">
+    <h1 class="text-4xl font-bold text-center mb-4">Your Account</h1>
+    <p class="text-center text-white/60 mb-12">Manage your profile, preferences, and security</p>
+
+    <div class="grid lg:grid-cols-3 gap-8">
+      <!-- Left: Profile Card -->
+      <div class="lg:col-span-1">
+        <div class="glass rounded-2xl p-8 text-center">
+          <div id="accountAvatar" class="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-nebula-600 to-nebula-800 flex items-center justify-center text-6xl font-bold text-white border-8 border-violet-600 shadow-2xl ring-4 ring-violet-500/30">
+            A
+          </div>
+          <h2 id="accountName" class="text-2xl font-bold mt-6">Loading...</h2>
+          <p id="accountEmail" class="text-white/70">user@example.com</p>
+          <div class="mt-4">
+            <span class="px-4 py-2 rounded-full bg-gradient-to-r from-nebula-600 to-purple-600 text-sm font-bold shadow-lg">
+              Pro Plan
+            </span>
+          </div>
+          <button onclick="logout()" class="w-full mt-8 py-3 rounded-xl bg-red-600/20 hover:bg-red-600/30 text-red-400 font-medium border border-red-500/30 transition">
+            Sign Out
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Settings Panels -->
+      <div class="lg:col-span-2 space-y-8">
+        <!-- Preferences -->
+        <div class="glass rounded-2xl p-8">
+          <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+            Preferences
+          </h3>
+          <div class="space-y-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-medium">Dark Mode</div>
+                <div class="text-sm text-white/60">Nebula looks best in the dark</div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" checked class="sr-only peer" onchange="toggleTheme(this.checked)">
+                <div class="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-nebula-600"></div>
+              </label>
+            </div>
+
+            <div>
+              <label class="font-medium">Default Retrieval Mode</label>
+              <select id="defaultRetrievalMode" class="mt-2 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm">
+                <option value="hybrid">Hybrid + LLM (Recommended)</option>
+                <option value="rerank">FAISS + BM25 + Rerank</option>
+                <option value="simple">Fast & Simple</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="font-medium">Chat Style</label>
+              <div class="grid grid-cols-2 gap-4 mt-3">
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input type="radio" name="chatStyle" value="compact" class="w-4 h-4 text-nebula-600">
+                  <span>Compact (like ChatGPT)</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input type="radio" name="chatStyle" value="spacious" checked class="w-4 h-4 text-nebula-600">
+                  <span>Spacious (more breathing room)</span>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label class="font-medium">Enter Key Behavior</label>
+              <select class="mt-2 w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm">
+                <option>Send message</option>
+                <option>Add new line</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Model -->
+        <div class="glass rounded-2xl p-8">
+          <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+            AI Model
+          </h3>
+          <div class="space-y-4">
+            <div class="bg-nebula-600/20 border border-nebula-500/50 rounded-xl p-5">
+              <div class="flex justify-between items-center">
+                <div>
+                  <div class="font-bold text-nebula-300">Gemini 2.5 Flash</div>
+                  <div class="text-sm text-white/70">Fast • Cost-effective • Current model</div>
+                </div>
+                <span class="px-4 py-2 bg-nebula-600 rounded-full text-sm font-bold">Active</span>
+              </div>
+            </div>
+            <button class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-medium">
+              Upgrade to Gemini 2.5 Pro (Coming Soon)
+            </button>
+          </div>
+        </div>
+
+        <!-- API Keys -->
+        <div class="glass rounded-2xl p-8">
+          <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+            API Keys
+          </h3>
+          <div class="space-y-4">
+            <div>
+              <label class="text-sm text-white/70">Gemini API Key</label>
+              <div class="flex gap-3 mt-2">
+                <input type="password" value="sk-..." class="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-3 font-mono text-sm" readonly>
+                <button class="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20">Copy</button>
+                <button class="px-5 py-3 rounded-xl bg-nebula-600 hover:bg-nebula-500">Change</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="glass rounded-2xl p-8 border-2 border-red-500/30">
+          <h3 class="text-xl font-bold mb-6 text-red-400 flex items-center gap-3">
+            Danger Zone
+          </h3>
+          <div class="space-y-4">
+            <button class="w-full py-3 rounded-xl bg-red-600/20 hover:bg-red-600/30 text-red-400 font-medium border border-red-500/50 transition">
+              Clear All Uploaded Documents
+            </button>
+            <button class="w-full py-3 rounded-xl bg-red-600/20 hover:bg-red-600/30 text-red-400 font-medium border border-red-500/50 transition">
+              Delete Account (Irreversible)
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+<!-- UPGRADE PLAN PAGE (ChatGPT Style) -->
+<section id="upgrade" class="page hidden">
+  <div class="max-w-6xl mx-auto px-4 py-12">
+    <h1 class="text-4xl font-bold text-center mb-4">Choose Your Plan</h1>
+    <p class="text-center text-white/70 mb-12 max-w-2xl mx-auto">
+      Unlock unlimited documents, priority support, and advanced AI features.
+    </p>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      <!-- Free Plan -->
+      <div class="glass rounded-2xl p-8 border-2 border-white/10 hover:border-nebula-500/50 transition-all">
+        <h3 class="text-2xl font-bold mb-4">Free</h3>
+        <div class="text-5xl font-bold mb-2">$0<span class="text-xl text-white/60">/month</span></div>
+        <ul class="space-y-4 mb-8 text-white/80">
+          <li class="flex items-center gap-3"><span class="text-green-400">✓</span> Up to 5 documents</li>
+          <li class="flex items-center gap-3"><span class="text-green-400">✓</span> Basic chat</li>
+          <li class="flex items-center gap-3"><span class="text-red-400">✗</span> No priority support</li>
+          <li class="flex items-center gap-3"><span class="text-red-400">✗</span> Limited retrieval</li>
+        </ul>
+        <button class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-medium" disabled>
+          Current Plan
+        </button>
+      </div>
+
+      <!-- Pro Plan (Recommended) -->
+      <div class="glass rounded-2xl p-8 border-4 border-nebula-500 shadow-2xl shadow-nebula-500/20 transform scale-105">
+        <div class="bg-nebula-600 text-white text-sm font-bold px-4 py-1 rounded-full inline-block mb-4">
+          Most Popular
+        </div>
+        <h3 class="text-2xl font-bold mb-4">Pro</h3>
+        <div class="text-5xl font-bold mb-2">$19<span class="text-xl text-white/60">/month</span></div>
+        <ul class="space-y-4 mb-8 text-white/90">
+          <li class="flex items-center gap-3"><span class="text-green-400">✓</span> <strong>10x documents</strong></li>
+          <li class="flex items-center gap-3"><span class="text-green-400">✓</span> <strong>Advanced hybrid search</strong></li>
+          <li class="flex items-center gap-3"><span class="text-green-400">✓</span> Priority AI responses</li>
+          <li class="flex items-center gap-3"><span class="text-green-400">✓</span> Export & share chats</li>
+          <li class="flex items-center gap-3"><span class="text-green-400">✓</span> Early access to new features</li>
+        </ul>
+        <button class="w-full py-4 rounded-xl bg-nebula-600 hover:bg-nebula-500 font-bold text-lg shadow-lg">
+          Upgrade to Pro
+        </button>
+      </div>
+
+      <!-- Enterprise -->
+      <div class="glass rounded-2xl p-8 border-2 border-white/10 hover:border-cyan-500/50 transition-all">
+        <h3 class="text-2xl font-bold mb-4">Enterprise</h3>
+        <div class="text-4xl font-bold mb-2">Custom</div>
+        <p class="text-white/60 mb-6">For teams and large deployments</p>
+        <ul class="space-y-4 mb-8 text-white/80">
+          <li class="flex items-center gap-3"><span class="text-green-400">✓</span> Everything in Pro</li>
+          <li class="flex items-center gap-3"><span class="text-green-400">✓</span> SSO & team management</li>
+          <li class="flex items-center gap-3"><span class="text-green-400">✓</span> On-premise option</li>
+          <li class="flex items-center gap-3"><span class="text-green-400">✓</span> Dedicated support</li>
+        </ul>
+        <button class="w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-medium">
+          Contact Sales
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- YOUR ACCOUNT PAGE – PREMIUM CHATGPT STYLE -->
+
+
+    <!-- CHAT -->
+    <section id="chat" class="page">
+
+
+
+<!-- RAG Source Viewer Panel (paste inside <section id="chat">) -->
+<aside id="sourcePanel" class="source-panel closed" aria-hidden="true">
+  <div class="source-panel-header">
+    <div class="title">Sources</div>
+    <div class="controls">
+      <button id="sourceCollapseBtn" class="icon-btn" title="Close">✕</button>
+    </div>
+  </div>
+
+  <div id="sourceList" class="source-list">
+    <!-- items populated by JS -->
+    <div class="empty">No sources yet — ask a question to see retrieval results.</div>
+  </div>
+
+  <div class="source-footer">
+    <button id="clearSourcesBtn" class="btn-ghost">Clear</button>
+    <button id="exportSourcesBtn" class="btn-ghost">Export</button>
+  </div>
+</aside>
+
+<!-- Source Viewer Modal (paste inside chat section as well) -->
+<div id="sourceModal" class="source-modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-backdrop"></div>
+  <div class="modal-card glass">
+    <div class="modal-header">
+      <div id="modalTitle">Source</div>
+      <button id="modalCloseBtn" class="icon-btn">✕</button>
+    </div>
+    <div id="modalBody" class="modal-body"></div>
+    <div class="modal-actions">
+      <button id="copyCitationBtn" class="btn-primary">Copy citation</button>
+      <button id="modalOpenFileBtn" class="btn-ghost">Open file</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toggle button (keeps inside chat so it doesn't leak) -->
+<button id="sourceToggleBtn" class="source-toggle" title="Open sources">Sources</button>
+
+
+
+
+    <!-- <div id="chatList" class="chat-list"></div> -->
+
+
+<!-- CHAT GPT STYLE SIDEBAR (INSIDE CHAT ONLY) -->
+<div id="chatSidebar" class="nebula-chat-sidebar closed">
+  <div class="sidebar-inner">
+    <header class="sidebar-header">
+      <div class="title">Your Chats</div>
+      <button id="sidebarCloseBtn" class="icon-btn">✕</button>
+    </header>
+
+    <button id="newChatBtn" class="btn-primary w-full mb-3">＋ New Chat</button>
+
+      <div id="chatList" class="chat-list"></div>
+    
+    <footer class="sidebar-footer">
+      <button id="exportChatsBtn" class="btn-ghost">Export</button>
+      <button id="clearAllChatsBtn" class="btn-danger">Clear All</button>
+    </footer>
+  </div>
+
+  <!-- Sidebar Toggle Button -->
+  <button id="sidebarToggle" class="sidebar-toggle">☰</button>
+</div>
+
+
+
+
+
+
+
+
+
+      
+      <div class="grid gap-6 md:grid-cols-3">
+        <!-- <div class="md:col-span-2 glass rounded-2xl p-5 flex flex-col min-h-[70vh]"> -->
+          <div class="md:col-span-2 glass rounded-2xl p-5 flex flex-col h-[70vh] overflow-hidden">
+
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold">Chat</h2>
+            <div class="text-xs text-white/60">Temporary Messages are sent to <code class="opacity-80">/Model-llama-8b</code></div>
+          </div>
+        
+          <div id="chatLog" class="mt-4 flex-1 overflow-auto space-y-3 pr-1"></div>
+          <div id="chatWatermark">ᑎEᗷᑌᒪᗩ</div>
+
+          <div class="mt-4 flex items-start gap-2">
+
+<!-- Upload / Options Button -->
+            <div class="relative">
+              <button id="optionsBtn"
+                      class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-xl font-bold translate-y-0.5">
+                +
+              </button>
+<!-- Toast Container -->
+<!-- <div id="toastContainer"></div> -->
+<!-- <div id="toastContainer" class="top-right"></div> -->
+
+<!-- Put this ONLY inside the <section id="chat"> ... </section> -->
+<div id="nebulaToastPortal" class="top-center"></div>
+
+              <!-- Popup Menu -->
+              <div id="optionsPopup"
+                  class="hidden absolute bottom-12 left-0 bg-black/90 backdrop-blur-md border border-white/20 rounded-lg shadow-lg text-sm text-white w-44 py-2">
+
+
+                   <!-- DEDICATED CHAT FILE INPUT (never used anywhere else) -->
+                  <input type="file" id="chatDedicatedFileInput" multiple style="display:none">
+
+                  <button class="option-item w-full text-left px-3 py-2 hover:bg-white/20" 
+                          data-type="upload" 
+                          onclick="document.getElementById('chatDedicatedFileInput').click()">
+                    🧷 Upload File
+                  </button>
+
+                <button class="option-item w-full text-left px-3 py-2 hover:bg-white/20" data-type="reasoning">✨ Reasoning Mode</button>
+                <button class="option-item w-full text-left px-3 py-2 hover:bg-white/20" data-type="setting" onclick="openSettings()">⚙️ Settings</button>
+              </div>
+            </div>
+
+            <input id="chatInput" class="flex-1 bg-white/10 border border-white/15 rounded-xl px-3 py-2 text-white placeholder-white/50" placeholder="Ask about your documents…" />
+
+
+            <button id="sendBtn" class="px-4 py-2 rounded-lg bg-nebula-600 hover:bg-nebula-500">⮞</button>
+            <button id="clearChatBtn" class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/10">Clear</button>
+          
+
+          
+          
+          </div>
+
+        </div>
+
+        <div class="glass rounded-2xl p-5">
+          <h3 class="text-lg font-medium">Usage</h3>
+          <p class="text-sm text-white/70 mt-2">Hybrid retrieval (FAISS + BM25) with cosine re-ranking. Replies support markdown and code. If your backend includes citations, they’ll render under each answer.</p>
+          <div class="mt-4">
+            <label class="text-sm text-white/70">Retrieval mode</label>
+            <select id="retrievalMode" class="mt-1 w-full bg-white/10 border border-white/15 rounded-lg px-3 py-2 text-sm">
+              <option value="hybrid" class="text-black" selected>Hybrid + LLM (Recommended)</option>
+              <option value="faiss"class="text-black">FAISS + BM25 + RERANK+RRF</option>
+
+              <option value="faissonly"class="text-black">FAISS +BM25+RRFonly</option>
+            </select>
+
+            <div class="mt-4">
+            <div class="small">Role 👑</div>
+            <select id="roleSel" class="mt-1 w-full bg-white/10 border border-white/15 rounded-lg px-3 py-2 text-sm ">
+              <option value="hybrid"  class="text-black" selected>User</option>
+
+              <option value="support" class="text-black">Support</option>
+              <option value="sales" class="text-black">Sales</option>
+              <option value="admin" class="text-black">Admin</option>
+            </select>
+          </div>
+          
+        <div class="option-container">
+          <div class="option"> ⭐ Enable query rewriting 👑<span class="cancel-btn">×</span></div>
+          <div class="option"> ❄️ Enable multi-query 👑<span class="cancel-btn">×</span></div>
+        </div>
+
+
+
+
+          <div class="mt-4">
+            <div class="small" class="text-black">Session ID (kept for memory)👑</div>
+            <input id="sessionId" class="mt-1 w-full bg-white/10 border border-white/15 rounded-lg px-3 py-2 text-sm" placeholder=" Auto or Write Numeric code" />
+          </div>
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dash" class="page">
+      <div class="grid gap-6 md:grid-cols-3">
+        <div class="glass rounded-2xl p-5">
+          <h3 class="text-lg font-medium">Backend Status</h3>
+          <div id="health" class="mt-2 text-white/80">checking…</div>
+          <div class="mt-4 flex gap-2">
+            <button id="refreshBtn" class="px-3 py-1.5 rounded-md bg-nebula-600 hover:bg-nebula-500">Refresh</button>
+            <button id="resetBtn" type="button" class="px-3 py-1.5 rounded-md bg-white/10 hover:bg-white/20 border border-white/10">Reset Index</button>
+            <div id="nebulaToastPortal" class="top-center"></div>
+
+          </div>
+        </div>
+
+        <div class="glass rounded-2xl p-5 md:col-span-2">
+          <h3 class="text-lg font-medium">System Metrics</h3>
+          <canvas id="statsChart" class="mt-4" height="96"></canvas>
+          <div class="text-xs text-white/50 mt-2">Showing <span class="font-medium">files</span>, <span class="font-medium">chunks</span>, and feature flags (bm25/ocr).</div>
+        </div>
+
+     
+<!-- 📊 Analytics Dashboard -->
+<!-- 📊 Latency & Performance Dashboard -->
+<div class="glass rounded-2xl p-5 md:col-span-2">
+  <h3>RAG Performance Metrics</h3>
+  <div id="metrics" class="mt-3 small">loading…</div>
+
+
+
+
+  
+</div>
+
+
+
+
+
+
+
+      </div>
+    </section>
+  </main>
+
+<!-- AUTH MODAL -->
+<div id="authModal" class="fixed inset-0 hidden z-[70]">
+  <div class="absolute inset-0 bg-black/60"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4">
+    <div class="glass rounded-2xl p-6 w-full max-w-md">
+      <h3 class="text-xl font-semibold mb-4 text-center">Welcome to Nebula</h3>
+
+      <div id="authTabs" class="flex justify-center gap-4 mb-4">
+        <button id="tabLogin" class="font-medium text-nebula-300 border-b-2 border-nebula-400 pb-1" onclick="setAuthMode('login')">Sign In</button>
+        <button id="tabRegister" class="font-medium text-white/70 pb-1" onclick="setAuthMode('register')">Sign Up</button>
+      </div>
+
+      <div id="authFields">
+        <input id="authUser" class="w-full bg-white/10 border border-white/15 rounded-lg px-3 py-2 mb-2" placeholder="Username">
+        <input id="authPass" type="password" class="w-full bg-white/10 border border-white/15 rounded-lg px-3 py-2 mb-4" placeholder="Password">
+      </div>
+
+      <button id="authActionBtn" class="w-full mb-3 px-4 py-2 rounded-lg bg-nebula-600 hover:bg-nebula-500">Sign In</button>
+
+      <div class="flex items-center my-3">
+        <div class="flex-grow h-px bg-white/10"></div>
+        <div class="mx-2 text-xs text-white/50">or</div>
+        <div class="flex-grow h-px bg-white/10"></div>
+      </div>
+
+      <!-- Google Sign-In button -->
+      <!-- <button class="w-full px-4 py-2 rounded-lg bg-white text-gray-800 font-medium hover:bg-gray-200 flex items-center justify-center gap-2" onclick="googleAuth()">
+        <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-5 h-5" alt=""> Sign in with Google
+      </button> -->
+
+          <!-- Google Login Button -->
+<button class="w-full px-4 py-2 rounded-lg bg-white text-black font-medium hover:bg-gray-200 flex items-center justify-center gap-2"
+        onclick="googleAuth()">
+  <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-5 h-5" alt="">
+  Sign in with Google
+</button>
+
+<p id="authMsg" class="mt-4 text-sm text-white/60 text-center"></p>
+
+<script>
+  // Detect login success redirect
+  const urlParams = new URLSearchParams(window.location.search);
+
+  if (urlParams.has("jwt")) {
+      const token = urlParams.get("jwt");
+
+      // Save JWT to localStorage
+      localStorage.setItem("AUTH_TOKEN", token);
+
+      document.getElementById("authMsg").textContent =
+        "✅ Logged in with Google. JWT stored successfully!";
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
+      <div id="authMsg" class="mt-4 text-sm text-white/60 text-center"></div>
+
+      <div class="mt-6 text-center">
+        <button class="text-white/60 text-sm hover:text-white/80 underline" onclick="closeAuth()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+  <!-- SETTINGS MODAL -->
+  <div id="settingsModal" class="fixed inset-0 hidden z-[60]">
+    <div class="absolute inset-0 bg-black/60"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="glass rounded-2xl p-6 w-full max-w-md">
+        <h3 class="text-xl font-semibold">Settings</h3>
+        <div class="mt-3 text-sm text-white/70">API Base URL</div>
+        <input id="apiBase" class="mt-2 w-full bg-white/10 border border-white/15 rounded-lg px-3 py-2" placeholder="http://localhost:8000">
+        <div class="mt-5 flex justify-end gap-2">
+          <button class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/10" onclick="closeSettings()">Cancel</button>
+          <button class="px-3 py-2 rounded-lg bg-nebula-600 hover:bg-nebula-500" onclick="saveSettings()">Save</button>
+        </div>
+        <div class="theme-switcher">
+  <button class="theme-btn" data-theme="light">☀️</button>
+  <button class="theme-btn" data-theme="dark">🌙</button>
+  <button class="theme-btn" data-theme="nebula">🌌</button>
+  <button class="theme-btn" data-theme="aurora">❄️</button>
+</div>
+
+        <div class="mt-3 text-xs text-white/60">Tip: Set this to your deployed FastAPI URL.</div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  
+  <!-- Footer -->
+  <footer class="pb-10 text-center text-xs text-white/50">
+    Nebula v1.1 • © 2025 • Built as a single-file RAG console
+  </footer>
+
+
+
+
+
+
+<script src="ne.js" defer></script>
+
+<script>
+
+
+
+
+
+
+
+
+
+  
+// Ultra-smooth scrolling + momentum
+const lenis = new Lenis({
+  duration: 1.2,
+  easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+  smoothWheel: true,
+  smoothTouch: false,
+})
+
+function raf(time) {
+  lenis.raf(time)
+  requestAnimationFrame(raf)
+}
+requestAnimationFrame(raf)
+
+// Enhance page transitions
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.animationDelay = `${Math.random() * 0.2}s`;
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.bubble, .glass, .option, button').forEach(el => {
+  observer.observe(el);
+});
+</script>
+
+
+
+</body>
+</html>
