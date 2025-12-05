@@ -1312,6 +1312,7 @@ async def get_current_user(Authorization: str = None):
         raise HTTPException(status_code=401, detail="Invalid token")
 
 
-if __name__ == "__main__":
-    print("✅ Gemini RAG running: http://localhost:8000")
-    uvicorn.run("new:app", host="0.0.0.0", port=8000, reload=True)
+# if __name__ == "__main__":
+#     print("✅ Gemini RAG running: http://localhost:8000")
+#     uvicorn.run("new:app", host="0.0.0.0", port=8000, reload=True)
+
