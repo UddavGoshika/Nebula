@@ -57,36 +57,36 @@ document.addEventListener('mousemove', e => {
 //   });
 // });
 
-const themeButtons = document.querySelectorAll('.theme-btn');
-const bgVideo = document.getElementById('bg-video');
+// const themeButtons = document.querySelectorAll('.theme-btn');
+// const bgVideo = document.getElementById('bg-video');
 
-themeButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    const theme = btn.dataset.theme;
+// themeButtons.forEach(btn => {
+//   btn.addEventListener('click', () => {
+//     const theme = btn.dataset.theme;
 
-    // switch theme classes
-    document.body.classList.remove(
-      'theme-light',
-      'theme-dark',
-      'theme-nebula',
-      'theme-aurora'
-    );
-    document.body.classList.add(`theme-${theme}`);
+//     // switch theme classes
+//     document.body.classList.remove(
+//       'theme-light',
+//       'theme-dark',
+//       'theme-nebula',
+//       'theme-aurora'
+//     );
+//     document.body.classList.add(`theme-${theme}`);
 
-    // handle bg video for aurora only
-    if (theme === 'aurora') {
-      bgVideo.style.display = 'block';       // or add a class like 'show-video'
-      bgVideo.play();                        // optional
-    } else {
-      bgVideo.pause();                       // optional
-      bgVideo.style.display = 'none';        // or remove class
-    }
+//     // handle bg video for aurora only
+//     if (theme === 'aurora') {
+//       bgVideo.style.display = 'block';       // or add a class like 'show-video'
+//       bgVideo.play();                        // optional
+//     } else {
+//       bgVideo.pause();                       // optional
+//       bgVideo.style.display = 'none';        // or remove class
+//     }
 
-    // button click animation
-    btn.style.transform = 'scale(1.4)';
-    setTimeout(() => (btn.style.transform = ''), 300);
-  });
-});
+//     // button click animation
+//     btn.style.transform = 'scale(1.4)';
+//     setTimeout(() => (btn.style.transform = ''), 300);
+//   });
+// });
 
 
 // ---------- helpers ----------
@@ -1819,4 +1819,5 @@ function escapeHtml(text) {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') { closeModal(); closePanel(); }
   });
+
 })();
