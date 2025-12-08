@@ -57,36 +57,36 @@ document.addEventListener('mousemove', e => {
 //   });
 // });
 
-// const themeButtons = document.querySelectorAll('.theme-btn');
-// const bgVideo = document.getElementById('bg-video');
+const themeButtons = document.querySelectorAll('.theme-btn');
+const bgVideo = document.getElementById('bg-video');
 
-// themeButtons.forEach(btn => {
-//   btn.addEventListener('click', () => {
-//     const theme = btn.dataset.theme;
+themeButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const theme = btn.dataset.theme;
 
-//     // switch theme classes
-//     document.body.classList.remove(
-//       'theme-light',
-//       'theme-dark',
-//       'theme-nebula',
-//       'theme-aurora'
-//     );
-//     document.body.classList.add(`theme-${theme}`);
+    // switch theme classes
+    document.body.classList.remove(
+      'theme-light',
+      'theme-dark',
+      'theme-nebula',
+      'theme-aurora'
+    );
+    document.body.classList.add(`theme-${theme}`);
 
-//     // handle bg video for aurora only
-//     if (theme === 'aurora') {
-//       bgVideo.style.display = 'block';       // or add a class like 'show-video'
-//       bgVideo.play();                        // optional
-//     } else {
-//       bgVideo.pause();                       // optional
-//       bgVideo.style.display = 'none';        // or remove class
-//     }
+    // handle bg video for aurora only
+    if (theme === 'aurora') {
+      bgVideo.style.display = 'block';       // or add a class like 'show-video'
+      bgVideo.play();                        // optional
+    } else {
+      bgVideo.pause();                       // optional
+      bgVideo.style.display = 'none';        // or remove class
+    }
 
-//     // button click animation
-//     btn.style.transform = 'scale(1.4)';
-//     setTimeout(() => (btn.style.transform = ''), 300);
-//   });
-// });
+    // button click animation
+    btn.style.transform = 'scale(1.4)';
+    setTimeout(() => (btn.style.transform = ''), 300);
+  });
+});
 
 
 // ---------- helpers ----------
@@ -840,7 +840,7 @@ async function loadMetrics() {
       : "—";
 
     document.getElementById("metrics").innerHTML = `
-      <div class="bg-gray-900/60 backdrop-blur border border-gray-800 rounded-xl p-5 shadow-xl">
+      <div class="bg-transparent backdrop-blur border border-gray-800 rounded-xl p-5 shadow-xl">
         <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
           Live Analytics
           <span class="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full animate-pulse">
@@ -995,13 +995,18 @@ function updateAuthNav() {
   container.innerHTML = `
     <div class="relative group">
       <button class="flex items-center gap-3 px-4 py-2 rounded-xl hover:bg-white/10 transition-all">
-        ${userPicture ? `<img src="${userPicture}" class="w-8 h-8 rounded-full object-cover flex-shrink-0 border-4 border-nebula-500/80 shadow-2xl ring-2 ring-nebula-600/40" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'" alt="${userName}">` : ''}
+        ${userPicture ? `<img src="${userPicture}" class="w-8 h-8 rounded-full object-cover flex-shrink-0 " onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'" alt="${userName}">` : ''}
         <div class="${userPicture ? 'hidden' : 'flex'} w-9 h-9 rounded-full !bg-gradient-to-br !from-nebula-600 !via-nebula-500 !to-purple-600 flex items-center justify-center text-white font-bold text-lg border-4 border-nebula-400 shadow-2xl ring-4 ring-nebula-500/40 flex-shrink-0">${userName.charAt(0).toUpperCase()}</div>
         <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
         </svg>
       </button>
-      <div class="absolute right-0 top-full mt-3 w-56 glass rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all border border-white/10">
+<div class="absolute right-0 top-full mt-3 w-56 
+bg-gray-900/80 bg-opacity-80 backdrop-blur-2xl
+             rounded-xl shadow-2xl 
+             opacity-0 invisible group-hover:opacity-100 group-hover:visible 
+             transition-all duration-200 ease-out 
+             border border-white/10">
         <div class="p-3 border-b border-white/10">
           <div class="text-xs text-white/60">Signed in as</div>
           <div class="font-medium truncate">${userName}</div>
@@ -1009,7 +1014,7 @@ function updateAuthNav() {
         </div>
         <button onclick="showAccountPage()" class="w-full text-left px-4 py-3 hover:bg-white/10">Your Account</button>
         <button onclick="showUpgradePage()" class="w-full text-left px-4 py-3 hover:bg-violet-500/80">Upgrade Plan</button>
-        <button onclick="logout()" class="w-full text-left px-4 py-3 hover:bg-red-500/80 text-white-400">Logout</button>
+        <button onclick="logout()" class=" logoutcss w-full text-left px-4 py-3 hover:bg-red-500/80 text-white-400">Logout</button>
       </div>
     </div>
   `;
@@ -1819,5 +1824,4 @@ function escapeHtml(text) {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') { closeModal(); closePanel(); }
   });
-
 })();
