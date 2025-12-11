@@ -116,7 +116,7 @@ function show(id) {
 
 function openSettings() {
   $("#settingsModal").classList.remove("hidden");
-  $("#apiBase").value = API_BASE();
+  $("#apiBase").value = "https://uddavgoshika.github.io/Nebula/";
 }
 
 function closeSettings() {
@@ -928,20 +928,177 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ---------- LOGIN PAGE LOGIC ----------
-let authMode = 'login';
+// let authMode = 'login';
 
-function setAuthMode(mode) {
-  authMode = mode;
-  if (mode === 'login') {
-    $('#tabLogin').classList.add('text-nebula-300', 'border-b-2', 'border-nebula-400');
-    $('#tabRegister').classList.remove('text-nebula-300', 'border-b-2', 'border-nebula-400');
-    $('#authActionBtn').textContent = 'Sign In';
-  } else {
-    $('#tabRegister').classList.add('text-nebula-300', 'border-b-2', 'border-nebula-400');
-    $('#tabLogin').classList.remove('text-nebula-300', 'border-b-2', 'border-nebula-400');
-    $('#authActionBtn').textContent = 'Sign Up';
+// function setAuthMode(mode) {
+//   authMode = mode;
+//   if (mode === 'login') {
+//     $('#tabLogin').classList.add('text-nebula-300', 'border-b-2', 'border-nebula-400');
+//     $('#tabRegister').classList.remove('text-nebula-300', 'border-b-2', 'border-nebula-400');
+//     $('#authActionBtn').textContent = 'Sign In';
+//   } else {
+//     $('#tabRegister').classList.add('text-nebula-300', 'border-b-2', 'border-nebula-400');
+//     $('#tabLogin').classList.remove('text-nebula-300', 'border-b-2', 'border-nebula-400');
+//     $('#authActionBtn').textContent = 'Sign Up';
+//   }
+// }
+const registerTab = document.getElementById('register');
+const loginTab    = document.getElementById('loginn');
+
+const registerForm = document.getElementById('registeruser');
+const loginForm    = document.getElementById('loginuser');
+
+// Hide login form when page loads
+loginForm.classList.add('hidden');
+
+registerTab.onclick = function() {
+    registerForm.classList.remove('hidden');
+    loginForm.classList.add('hidden');
+    
+    registerTab.classList.add('active-tab');
+    loginTab.classList.remove('active-tab');
+};
+
+loginTab.onclick = function() {
+    loginForm.classList.remove('hidden');
+    registerForm.classList.add('hidden');
+    
+    loginTab.classList.add('active-tab');
+    registerTab.classList.remove('active-tab');
+};
+
+$('#signin').addEventListener('click', async () => {
+  const username = $('#loginUser').value.trim();
+  const password = $('#loginPass').value.trim();
+  if(!username||!password){
+    showToast('Please enter username and password.', 'error');
+    return;
   }
+  else {
+    showToast('Signing in...', 'info');
+  } 
+});
+
+$('#signup').addEventListener('click', async () => {
+  const username = $('#registerName').value.trim();
+  const email = $('#registerEmail').value.trim();
+  const password = $('#registerPass').value.trim();
+  const confirmPassword = $('#registerConfirmPass').value.trim();
+  if (!username || !email || !password || !confirmPassword) {
+    showToast('Please fill in all fields.', 'error');
+    return;
+
+  }
+
+  else if (!/\S+@\S+\.\S+/.test(email)) {
+    showToast('Please enter a valid email address.', 'error');
+    return;
+  }
+  else if (password.length < 6) {
+    showToast('Password must be at least 6 characters long.', 'error');
+    return;
+  }
+  else if (password.length > 20) {
+    showToast('Password must not exceed 20 characters.', 'error');
+    return;
+  }
+  else if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password) || !/[!@#$%^&*]/.test(password)) {
+    showToast('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.', 'error');
+    return;
+  }
+  else if (password !== confirmPassword) {
+    showToast('Passwords do not match.', 'error');
+    return;
+  }
+  else {
+    showToast('Signing up...', 'info');
+  } 
+  
+});
+
+
+const signupBtn = document.getElementById('signup');
+
+signupBtn.addEventListener('click', async () => {
+
+  const username = document.getElementById('registerName').value;
+  const email = document.getElementById('registerEmail').value;
+  const password = document.getElementById('registerPass').value;
+
+  const response = await fetch(API_BASE() + '/signup', {
+    method: 'POST',
+    headers: {
+      'Content-Type':'application/json'
+    },
+    body: JSON.stringify({
+      name: username,
+      email: email,
+      password: password
+    })
+  });
+
+  const data = await response.json();
+
+  if (response.status === 200 || response.status === 201) {
+    showToast('Registration successful! Please log in.', 'success');
+
+    document.getElementById('registerName').value = '';
+    document.getElementById('registerEmail').value = '';
+    document.getElementById('registerPass').value = '';
+    document.getElementById('registerConfirmPass').value = '';
+  } else {
+    showToast(data.detail || 'Signup failed', 'error');
+  }
+
+});
+
+
+const userlogin = document.getElementById('loginUser');
+const loginpass = document.getElementById('loginPass');
+
+const loginsub = document.getElementById('signin');
+
+
+loginsub.addEventListener('click' , async() =>{
+const response = await fetch(API_BASE() + '/userlogin',
+{
+method:'POST',
+headers:{
+'Content-Type':'application/json'
+},
+body:JSON.stringify({
+username:userlogin.value,
+password:loginpass.value
+})
+});
+
+    const data =await response.json();
+
+    const jwt = data.jwt;              // 🔑 from backend
+
+    // ✅ EXACT SAME BEHAVIOUR AS GOOGLE LOGIN
+    localStorage.setItem("AUTH_TOKEN", jwt);
+    currentChatId = null;
+    updateAuthNav();
+    show("home");
+    showToast("Logged in successfully! 😉", "login");
+
+
+
+if(response.status===200 || response.status ==201){
+print("succesfully login 😉")  
+
 }
+else{
+  showToast(data.detail ||'login failed ❌' , 'error')
+}
+
+} );
+
+
+
+
+
 
 $('#authActionBtn').addEventListener('click', async () => {
   const username = $('#authUser').value.trim();
@@ -975,6 +1132,32 @@ function googleAuth() {
   window.location.href = "http://localhost:8000/auth/google/login";
 }
 
+
+function togglePasswordVisibility(){
+const passbtn = document.getElementById('showpass');
+const val = document.getElementById('registerPass');
+
+if (val.type === "password") {
+    val.type = "text";
+    passbtn.textContent = ' 👀 ';
+    passbtn.classList.add('fa-eye-slash'); 
+} else {
+    val.type = "password";
+    passbtn.textContent = ' 🙈 ';
+    passbtn.classList.remove('fa-eye-slash');
+    passbtn.classList.add('fa-eye');   
+}
+
+
+
+
+}
+
+
+
+
+
+
 // Update Navbar based on auth state
 function updateAuthNav() {
   const token = localStorage.getItem("AUTH_TOKEN");
@@ -994,9 +1177,9 @@ function updateAuthNav() {
   } catch (e) { }
   container.innerHTML = `
     <div class="relative group">
-      <button class="flex items-center gap-3 px-4 py-2 rounded-xl hover:bg-white/10 transition-all">
+      <button class="flex items-center gap-3 px-4 py-2 rounded-xl hover:bg-white/10 h-10 transition-all">
         ${userPicture ? `<img src="${userPicture}" class="w-8 h-8 rounded-full object-cover flex-shrink-0 " onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'" alt="${userName}">` : ''}
-        <div class="${userPicture ? 'hidden' : 'flex'} w-9 h-9 rounded-full !bg-gradient-to-br !from-nebula-600 !via-nebula-500 !to-purple-600 flex items-center justify-center text-white font-bold text-lg border-4 border-nebula-400 shadow-2xl ring-4 ring-nebula-500/40 flex-shrink-0">${userName.charAt(0).toUpperCase()}</div>
+        <div class="${userPicture ? 'hidden' : 'flex'} w-9 h-9 rounded-full !bg-gradient-to-br !from-nebula-600 !via-nebula-500 !to-purple-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">${userName.charAt(0).toUpperCase()}</div>
         <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
         </svg>
