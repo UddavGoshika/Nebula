@@ -10,7 +10,7 @@ python-dotenv
 groq
 pydantic
 authlib
-mysql-connector-python==8.0.34
+mysql-connector-python
 
 redis
 aioredis
@@ -28,7 +28,8 @@ python-pptx
 python-docx
 beautifulsoup4
 PyPDF2
-passlib[bcrypt]==1.7.4
+passlib[bcrypt]
+
 
 sentence-transformers
 google-generativeai
