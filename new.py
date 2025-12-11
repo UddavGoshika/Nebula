@@ -1,4 +1,6 @@
-
+from pydantic import BaseModel, EmailStr
+from passlib.hash import bcrypt
+from fastapi import FastAPI, HTTPException
 import os, io, re, json, shutil
 from pathlib import Path
 from typing import List
@@ -25,6 +27,11 @@ import uuid
 import jwt  # already there
 import redis
 from functools import lru_cache
+import mysql.connector
+from argon2 import PasswordHasher
+
+# 1. Connect to local MySQL
+
 
 load_dotenv()  # must be first before reading GEMINI_API_KEY
 
@@ -781,53 +788,6 @@ def debug():
 
 
 
-# ===============================================
-# 📊 Analytics Dashboard Metrics (backend)
-# ===============================================
-# from fastapi import Request
-# import time
-# from statistics import mean
-
-# # Store analytics data in memory (or switch to DB later)
-# ANALYTICS = {
-#     "search_count": 0,
-#     "sessions": set(),
-#     "search_times": [],
-#     "embed_times": [],
-#     "queries": {}
-# }
-
-
-
-
-# @app.get("/metrics")
-# async def get_metrics():
-#     if METRICS["search_count"] == 0:
-#         return {
-#             "search_count": 0,
-#             "avg_time_ms": 0,
-#             "avg_embed_ms": 0,
-#             "avg_llm_ms": 0,
-#             "sessions": 0,
-#             "top_queries": [],
-#             "last_ingest_at": None,
-#             "last_persist_at": None,
-#         }
-
-#     top = sorted(METRICS["queries"].items(), key=lambda x: x[1], reverse=True)[:5]
-
-#     return {
-#         "search_count": METRICS["search_count"],
-#         "avg_time_ms": round(mean(METRICS["total_ms"]), 2),
-#         "avg_embed_ms": round(mean(METRICS["embed_ms"]), 2),
-#         "avg_llm_ms": round(mean(METRICS["llm_ms"]), 2),
-#         "sessions": len(METRICS["sessions"]),
-#         "top_queries": top,
-#         "last_ingest_at": METRICS["last_updated"],
-#         "last_persist_at": METRICS["last_updated"],
-#     }
-
-
 
 
 
@@ -1196,7 +1156,7 @@ app.add_middleware(SessionMiddleware, secret_key="your-super-secret-key-change-i
 # Update CORS to allow your frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5500", "http://127.0.0.1:5500"],  # Both work
+    allow_origins=["http://localhost:5500","https://github.com/UddavGoshika/Nebula","https://uddavgoshika.github.io/Nebula/","https://uddavgoshika.github.io", "http://127.0.0.1:5500"],  # Both work
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -1241,6 +1201,157 @@ async def google_login(request: Request):
         prompt="consent"      # ← this now actually works!
     )
 
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+# @app.post('/userlogin')
+# async def login(payload: UserLogin):
+    
+#     cursor = conn.cursor()
+
+#     cursor.execute(
+#         "SELECT id, password_hash FROM users WHERE email = %s",
+#         (payload.username,)
+#     )
+
+#     db_user = cursor.fetchone()
+
+#     cursor.close()
+#     conn.close()
+
+#     if not db_user:
+#         raise HTTPException(status_code=400, detail="Invalid email or password")
+
+#     user_id, password_hash = db_user
+
+#     if not bcrypt.verify(payload.password, password_hash):
+#         raise HTTPException(status_code=400, detail="Invalid email or password")
+
+#     return {"message": "Login successful", "user_id": user_id}
+    
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError, InvalidHashError
+from fastapi import HTTPException
+
+@app.post("/userlogin")
+async def login(payload: UserLogin):
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="pyuser",
+        password="py123",
+        database="demo_db"
+    )
+    cursor = conn.cursor()
+    ph = PasswordHasher()
+
+    try:
+        cursor.execute(
+            "SELECT id, password_hash FROM users WHERE email = %s",
+            (payload.username,)
+        )
+
+        db_user = cursor.fetchone()
+        if not db_user:
+            raise HTTPException(status_code=400, detail="Invalid email or password")
+
+        user_id, password_hash = db_user
+
+        print("password_in db:" ,password_hash)
+
+
+        try:
+            print("hashed_password :", password_hash ,"hashed_password :", payload.password)
+
+            ph.verify(password_hash, payload.password)
+        except (VerifyMismatchError, InvalidHashError):
+            raise HTTPException(status_code=400, detail="Invalid email or password")
+        # Create JWT similar to Google’s payload format
+        token_payload = {
+            "sub": str(user_id),
+            "name": payload.username
+            
+            # "picture": "...",  # if you have a profile pic URL
+        }
+        jwt_token = create_access_token(token_payload)
+
+        return {"jwt": jwt_token}
+        
+        # return {"message": "Login successful", "user_id": user_id}
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+
+
+
+
+class signuprequest(BaseModel):
+    email: EmailStr
+    name: str
+    password: str
+
+@app.post("/signup", status_code=201)
+async def signup(user: signuprequest):
+    # This prints what came from JS
+    print("Signup user:", user.email)
+    print("Name:", user.name)
+    print("Password:", user.password)  # in real app don't log passwords!
+
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="pyuser",
+        password="py123",
+        database="demo_db"
+    )
+
+
+
+    # Here you would save to DB (e.g., MySQL) before returning
+
+    cursor = conn.cursor()
+
+    # check if email already exists
+    cursor.execute("SELECT id FROM users WHERE email = %s", (user.email,))
+    if cursor.fetchone():
+        cursor.close()
+        conn.close()
+        raise HTTPException(status_code=400, detail="Email already registered")
+
+
+    ph=PasswordHasher()
+    # hash password
+    pw_hash = ph.hash(user.password)
+
+    # insert user
+    cursor.execute(
+        "INSERT INTO users (username, email, password_hash) VALUES (%s, %s, %s)",
+        (user.name, user.email, pw_hash)
+    )
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return {"message": "Signup successful"}   
+    
+from jose import jwt
+from datetime import datetime, timedelta
+
+SECRET_KEY = "super-secret-key"  # put in env var in real app
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24
+
+def create_access_token(data: dict, expires_delta: timedelta | None = None):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+    
+    
 
 @app.get("/auth/google/callback")
 async def google_callback(request: Request):
@@ -1315,10 +1426,12 @@ async def get_current_user(Authorization: str = None):
 # if __name__ == "__main__":
 #     print("✅ Gemini RAG running: http://localhost:8000")
 #     uvicorn.run("new:app", host="0.0.0.0", port=8000, reload=True)
+
+# Put this at the very bottom of new.py (after app definition)
 if __name__ == "__main__":
-    import uvicorn
     import os
-    port = int(os.environ.get("PORT", 8000))
-    uvicorn.run("new:app", host="0.0.0.0", port=port)
-
-
+    import uvicorn
+    port = int(os.environ.get("PORT", "8000"))   # Render provides PORT
+    host = "0.0.0.0"
+    print(f"Starting uvicorn on {host}:{port} ...")
+    uvicorn.run("new:app", host=host, port=port, log_level="info")
