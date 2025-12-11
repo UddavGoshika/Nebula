@@ -56,7 +56,7 @@ html.lenis { height: auto; }
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="/ui/ne.css">
   <!-- Chart.js, Marked (Markdown), DOMPurify (sanitize) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -83,14 +83,12 @@ html.lenis { height: auto; }
           <button class="px-3 py-1.5 rounded-lg nav-link " onclick="show('upload')">Upload</button>
           <button class="px-3 py-1.5 rounded-lg nav-link " onclick="show('chat')">Chat</button>
           <button class="px-3 py-1.5 rounded-lg nav-link " onclick="show('dash')">Dashboard</button>
-          <!-- <button class="px-3 py-1.5 rounded-lg nav-link hover:text-nebula-200" onclick="show('login')">Login</button> -->
-          <!-- Dynamic Auth Button - Replaces Login/Profile automatically -->
-<div id="authNavContainer" class="flex items-center gap-3">
-  <!-- This will be replaced by JS on page load -->
-  <button id="loginNavBtn" class="px-3 py-1.5 rounded-lg nav-link " onclick="show('login')">
-    Login
-  </button>
-</div>
+
+          <div id="authNavContainer" class="flex items-center gap-3">
+
+          <button id="loginNavBtn" class="px-3 py-1.5 rounded-lg nav-link " onclick="show('login')">Login</button>
+          
+          </div>
           <button class="ml-1 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15" onclick="openSettings()">⚙️</button>
         </div>
       </div>
@@ -315,7 +313,7 @@ document.addEventListener('click', (e) => {
 
           <div class="hero-parallax">
             <!-- <h1 class="layer" data-depth="0.2">Nebula</h1> -->
-                   <p class="layer shine-text " data-depth="0.2">Nebula — Your AI Workspace from 2030</p></h1>
+                   <p class="layer shine-text " data-depth="0.2">ℕ𝕖𝕓𝕦𝕝𝕒 — 𝕐𝕠𝕦𝕣 𝔸𝕀 𝕎𝕠𝕣𝕜𝕤𝕡𝕒𝕔𝕖 𝕗𝕣𝕠𝕞 2030</p></h1>
 
       
 
@@ -399,40 +397,41 @@ document.addEventListener('click', (e) => {
 
 
 <video id="bg-video" autoplay muted loop playsinline>
-  <source src="ta.mp4" type="video/mp4" />
+  <source src="/ui/ta.mp4" type="video/mp4" />
 </video>
 
  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
 
 
-
 <!-- LOGIN SECTION -->
 <section id="login" class="page">
-  <div class="max-w-md mx-auto glass rounded-2xl p-6 mt-12">
+  <div class="max-w-md mx-auto glasslogin rounded-2xl p-6 mt-12">
     <h2 class="text-2xl font-semibold text-center">Welcome to Nebula</h2>
-    <p class="text-sm text-center mt-1 mb-6">Sign in or create an account to continue</p>
+    <p class="text-sm text-center mt-1 mb-4">Sign in or create an account to continue</p>
 
-    <div id="authTabs" class="flex justify-center gap-4 mb-6">
-      <button id="tabLogin" class="font-medium text-nebula-300 border-b-2 border-nebula-400 pb-1" onclick="setAuthMode('login')">
-        Sign In
-      </button>
-      <button id="tabRegister" class="font-medium  pb-1" onclick="setAuthMode('register')">
-        Sign Up
-      </button>
-    </div>
+              <div class="authlogin  flex justify-center gap-8 mb-6">
+              <button id="register" class="font-medium text-nebula-300 pb-fix active-tab">Sign Up</button>
+              <button id="loginn" class="font-medium text-nebula-300 pb-fix">Login</button>
+              </div>
+              <div id="registeruser">
 
-    <div id="authFields">
-      <input id="authUser" class="w-full bg-white/10 border  rounded-lg px-3 py-2 mb-2" placeholder="Username">
-      <input id="authPass" type="password" class="w-full bg-white/10 border  rounded-lg px-3 py-2 mb-4" placeholder="Password">
-    </div>
+              <input type="text" id="registerName" class="w-full bg-white/10 border rounded-lg px-3 py-2 mb-2" placeholder="Name">
+              <input type="text" id="registerEmail" class="w-full bg-white/10 border rounded-lg px-3 py-2 mb-2" placeholder="Email">
+              <input type="password" id="registerPass" class="w-full bg-white/10 border rounded-lg px-3 py-2 mb-2" placeholder="Password">
+              <span toggle="#password-field" id="showpass" onclick="togglePasswordVisibility()" class="field-icon ">👀</span>
+              <input type="password" id="registerConfirmPass" class="w-full bg-white/10 border rounded-lg px-3 py-2 mb-2" placeholder="Confirm Password">
+              <button id="signup" class="w-full mb-3 mt-3 px-4 py-2 rounded-lg bg-nebula-600 hover:bg-nebula-500">Sign Up</button>
 
+              </div>
+                
+              <div id="loginuser">
 
+              <input type="text" id="loginUser" class="w-full bg-white/10 border rounded-lg px-3 py-2 mb-2" placeholder="Email">
+              <input type="password" id="loginPass" class="w-full bg-white/10 border rounded-lg px-3 py-2 mb-2" placeholder="Password">
+              <button id="signin" class="w-full mb-3 px-4 py-2 rounded-lg bg-nebula-600 hover:bg-nebula-500">Login</button>
+              <a link href="#" class="text-sm text-nebula-300 hover:underline ml-3">Forgot password</a>
 
-
-    <button id="authActionBtn" class="w-full mb-3 px-4 py-2 rounded-lg bg-nebula-600 hover:bg-nebula-500">
-      Sign In
-    </button>
-
+              </div>
     <div class="flex items-center my-3">
       <div class="flex-grow h-px bg-white/10"></div>
       <div class="mx-2 text-xs">or</div>
@@ -1043,7 +1042,7 @@ document.addEventListener('click', (e) => {
       <div class="glass rounded-2xl p-6 w-full max-w-md">
         <h3 class="text-xl font-semibold">Settings</h3>
         <div class="mt-3 text-sm">API Base URL</div>
-        <input id="apiBase" class="mt-2 w-full bg-white/10 border  rounded-lg px-3 py-2" placeholder="http://localhost:8000">
+        <input id="apiBase" class="mt-2 w-full bg-white/10 border  rounded-lg px-3 py-2" placeholder="https://uddavgoshika.github.io/Nebula/">
         <div class="mt-5 flex justify-end gap-2">
           <button class="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 border " onclick="closeSettings()">Cancel</button>
           <button class="px-3 py-2 rounded-lg bg-nebula-600 hover:bg-nebula-500" onclick="saveSettings()">Save</button>
@@ -1119,5 +1118,3 @@ document.querySelectorAll('.bubble, .glass, .option, button').forEach(el => {
 
 </body>
 </html>
-
-
