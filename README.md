@@ -2,9 +2,12 @@
 A lightweight, offline-capable **Retrieval-Augmented Generation (RAG)** chat system with a modern **ChatGPT-style UI**, simple authentication, document upload, and fast local LLM inference.
 
 This project is designed for developers, teams, and small organizations who want a **secure and easy-to-deploy RAG solution** without cloud dependency.
-  <img src="https://raw.githubusercontent.com/UddavGoshika/AiResume_Jd_Score/refs/heads/main/FirstUI.png" width="600" alt="Demo GIF">
 
 ---
+  <img src="https://github.com/UddavGoshika/Nebula/blob/main/Screenshot%202025-12-13%20013302.png" width="500" alt="Demo GIF">   <img src="https://github.com/UddavGoshika/Nebula/blob/main/Screenshot%202025-12-13%20013541.png" width="500" alt="Demo GIF">
+  
+
+
 
 ## 🌟 Features (Short & Essential)
 ### 🔒 Authentication
