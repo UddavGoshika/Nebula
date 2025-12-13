@@ -392,12 +392,12 @@ document.addEventListener('click', (e) => {
 
 <!-- The video -->
 <!-- <video autoplay muted loop id="myVideo">
-  <source src="/ui/ta.mp4" type="video/mp4">
+  <source src="ta.mp4" type="video/mp4">
 </video> -->
 
 
 <video id="bg-video" autoplay muted loop playsinline>
-  <source src="ta.mp4" type="video/mp4" />
+  <source src="/ui/ta.mp4" type="video/mp4" />
 </video>
 
  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
@@ -861,7 +861,7 @@ document.addEventListener('click', (e) => {
           <div class="mt-4">
             <label class="text-sm">Retrieval mode</label>
             <select id="retrievalMode" class="mt-1 w-full bg-white/10 border  rounded-lg px-3 py-2 text-sm">
-              <option value="hybrid" class="text-black" selected>Hybrid + LLM (Recommended)</option>
+              <option value="hybridm" class="text-black" selected>Hybrid + LLM (Recommended)</option>
               <option value="faiss"class="text-black">FAISS + BM25 + RERANK+RRF</option>
 
               <option value="faissonly"class="text-black">FAISS +BM25+RRFonly</option>
@@ -870,7 +870,7 @@ document.addEventListener('click', (e) => {
             <div class="mt-4">
             <div class="small">Role 👑</div>
             <select id="roleSel" class="mt-1 w-full bg-white/10 border  rounded-lg px-3 py-2 text-sm ">
-              <option value="hybrid"  class="text-black" selected>User</option>
+              <option value="hybridd"  class="text-black" selected>User</option>
 
               <option value="support" class="text-black">Support</option>
               <option value="sales" class="text-black">Sales</option>
@@ -882,8 +882,6 @@ document.addEventListener('click', (e) => {
           <div class="option"> ⭐ Enable query rewriting 👑<span class="cancel-btn">×</span></div>
           <div class="option"> ❄️ Enable multi-query 👑<span class="cancel-btn">×</span></div>
         </div>
-
-
 
 
           <div class="mt-4">
@@ -924,9 +922,15 @@ document.addEventListener('click', (e) => {
      
 <!-- 📊 Analytics Dashboard -->
 <!-- 📊 Latency & Performance Dashboard -->
-<div class="glass rounded-2xl p-5 md:col-span-2">
+<div class="glass rounded-2xl p-5 md:col-span-2 ragana">
   <h3>RAG Performance Metrics</h3>
-  <div id="metrics" class="mt-3 small">loading…</div>
+  <div id="metrics" class="mt-3 small">loading…
+
+    <div class="skeleton skeleton-title"></div>
+
+
+
+  </div>
 
 
 
@@ -935,6 +939,42 @@ document.addEventListener('click', (e) => {
 </div>
 
 
+<!-- <div class="glass rounded-2xl p-5 md:col-span-1">
+  <h3>About Us</h3>
+
+
+
+
+  
+</div> -->
+
+<div class="glass rounded-2xl p-5 md:col-span-1 about-section">
+  <h3>About Us</h3>
+  <p>
+    Welcome to <strong>RagFile</strong> — an AI-powered platform that helps teams
+    manage and search documents intelligently. Our mission is to make knowledge
+    retrieval effortless and fast.
+  </p>
+
+  <div class="about-stats">
+    <div class="stat">
+      <h4>🚀 2025</h4>
+      <p>Founded</p>
+    </div>
+    <div class="stat">
+      <h4>🌍 50+</h4>
+      <p>Global Users</p>
+    </div>
+    <div class="stat">
+      <h4>🤝 01+</h4>
+      <p>Enterprise Partners</p>
+    </div>
+  </div>
+
+  <p class="about-footer">
+    Built with ❤️ by passionate engineers, researchers, and creators.
+  </p>
+</div>
 
 
 
