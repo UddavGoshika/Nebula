@@ -9,43 +9,61 @@ function escapeHtml(text) {
 // All helper functions, upload, chat, auth, etc. remain EXACTLY as you had them
 let currentChatId = null;  // ← ADD THIS LINE
 
-async function sendMessage() {
-  console.log("🔥 sendMessage() CALLED!");
-  console.log("🔥 mode = ", document.getElementById("retrievalMode").value);
 
-  const question = document.getElementById("userMessage").value;
-  const retrievalMode = document.getElementById("retrievalMode").value;
 
-  const payload = {
-    messages: [{ role: "user", content: question }],
-    retrieval_mode: retrievalMode,
-    role: "User"
-  };
+// async function sendMessage() {
+//   console.log("🔥 sendMessage() CALLED!");
+//   console.log("🔥 mode = ", document.getElementById("retrievalMode").value);
 
-const token = localStorage.getItem("AUTH_TOKEN");
+//   const question = document.getElementById("userMessage").value;
+//   // const retrievalMode = document.getElementById("retrievalMode").value;
+//   const user = document.getElementById('roleSel').value;
+//     const opts = getOptionValues(); // <— read selected options
 
-  const res = await fetch("/chat", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token && { "Authorization": `Bearer ${token}` })
-    },
-    body: JSON.stringify(payload)
-  });
 
-  const data = await res.json();
-  console.log("Reply:", data.reply);
-};
 
-document.addEventListener('mousemove', e => {
-  const layers = document.querySelectorAll('.layer');
-  const x = (e.clientX / window.innerWidth - 0.5) * 2;
-  const y = (e.clientY / window.innerHeight - 0.5) * 2;
-  layers.forEach(l => {
-    const depth = l.dataset.depth;
-    l.style.transform = `translate3d(${x * depth * 30}px, ${y * depth * 30}px, 0)`;
-  });
-});
+
+//   const payload = {
+//     messages: [{ role: "user", content: question }],
+//     retrieval_mode: retrievalMode,
+//     query_rewriting: opts.query_rewriting,
+//     multi_query: opts.multi_query
+
+
+
+
+//   };
+
+
+//   // const payload = {
+//   //   messages: [{ role: "user", content: question }],
+//   //   retrieval_mode: retrievalMode,
+//   //   role: "User"
+//     // };
+// const token = localStorage.getItem("AUTH_TOKEN");
+
+//   const res = await fetch("/chat", {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//       ...(token && { "Authorization": `Bearer ${token}` })
+//     },
+//     body: JSON.stringify(payload)
+//   });
+
+//   const data = await res.json();
+//   console.log("Reply:", data.reply);
+// };
+
+// document.addEventListener('mousemove', e => {
+//   const layers = document.querySelectorAll('.layer');
+//   const x = (e.clientX / window.innerWidth - 0.5) * 2;
+//   const y = (e.clientY / window.innerHeight - 0.5) * 2;
+//   layers.forEach(l => {
+//     const depth = l.dataset.depth;
+//     l.style.transform = `translate3d(${x * depth * 30}px, ${y * depth * 30}px, 0)`;
+//   });
+// });
 
 // const themeButtons = document.querySelectorAll('.theme-btn');
 // themeButtons.forEach(btn => {
@@ -487,9 +505,18 @@ window.saveSettings = saveSettings;
 
 
 
+function getOptionValues() {
+  return {
+    query_rewriting: document.querySelector(".option:nth-child(1)").classList.contains("selected"),
+    multi_query: document.querySelector(".option:nth-child(2)").classList.contains("selected")
+  };
+}
+
 
 
 async function send() {
+  const opts = getOptionValues(); // <— read selected options
+
   const msg = (input.value || "").trim();
   if (!msg) return;
 
@@ -502,8 +529,12 @@ async function send() {
   try {
     const payload = {
       messages: [{ content: msg }],
-      role: (roled?.value || "user"),
-      retrieval_mode: (retrievalModeSel?.value || "hybrid"),
+      role: (roleSel.value || "user"),
+      retrieval_mode: (retrievalMode.value || "hybrid"),
+       query_rewriting: opts.query_rewriting,
+    multi_query: opts.multi_query,
+
+
       chat_id: currentChatId
     };
 
@@ -556,7 +587,7 @@ async function send() {
   } catch (e) {
     console.error(e);
     setTyping(false);
-    bubble("ai", md("Server error or unauthorized."));
+    // bubble("ai", md("Server error or unauthorized."));
   }
 }
 
@@ -568,6 +599,8 @@ async function send() {
   clearBtn.addEventListener("click", () => {
     localStorage.removeItem("NEBULA_CHAT");
     chatLog.innerHTML = "";
+    sessionIdEl.value ="";  
+
   });
 
   loadLocal();
@@ -850,15 +883,18 @@ async function loadMetrics() {
 
         <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
           <!-- Total Searches -->
+
           <div class="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
             <div class="text-gray-400">Total Searches</div>
-            <div class="text-2xl font-bold text-white mt-1">${m.search_count || 0}</div>
+            <div class="text-2xl font-bold text-white mt-1">
+        ${m.search_count || 0}</div>
           </div>
 
           <!-- Avg Total Latency -->
           <div class="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
             <div class="text-gray-400">Avg Latency</div>
             <div class="text-2xl font-bold text-cyan-400 mt-1">
+
               ${m.avg_time_ms ? m.avg_time_ms.toFixed(1) + " ms" : "—"}
             </div>
           </div>
@@ -867,6 +903,7 @@ async function loadMetrics() {
           <div class="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
             <div class="text-gray-400">Embed + Search</div>
             <div class="text-xl font-bold text-orange-400 mt-1">
+
               ${m.avg_embed_ms ? m.avg_embed_ms.toFixed(0) + " ms" : "—"}
             </div>
           </div>
@@ -875,6 +912,7 @@ async function loadMetrics() {
           <div class="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
             <div class="text-gray-400">LLM Response</div>
             <div class="text-xl font-bold text-green-400 mt-1">
+
               ${m.avg_llm_ms ? m.avg_llm_ms.toFixed(0) + " ms" : "—"}
             </div>
           </div>
@@ -882,18 +920,23 @@ async function loadMetrics() {
           <!-- Sessions -->
           <div class="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
             <div class="text-gray-400">Active Sessions</div>
-            <div class="text-2xl font-bold text-purple-400 mt-1">${m.sessions || 0}</div>
+            <div class="text-2xl font-bold text-purple-400 mt-1">
+
+            ${m.sessions || 0}</div>
           </div>
 
           <!-- Last Updated -->
           <div class="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
             <div class="text-gray-400">Last Activity</div>
-            <div class="text-xl font-mono text-yellow-400 mt-1">${lastTime}</div>
+            <div class="text-xl font-mono text-yellow-400 mt-1">
+
+            ${lastTime}</div>
           </div>
         </div>
 
         <!-- Top Queries -->
         <div class="mt-5">
+        
           <div class="text-gray-300 font-medium mb-2">Top Queries</div>
           <div class="text-sm space-y-1.5">
             ${topQueriesHTML}
@@ -1072,26 +1115,43 @@ password:loginpass.value
 })
 });
 
-    const data =await response.json();
+    // const data =await response.json();
 
-    const jwt = data.jwt;              // 🔑 from backend
+    // const jwt = data.jwt;              // 🔑 from backend
 
-    // ✅ EXACT SAME BEHAVIOUR AS GOOGLE LOGIN
-    localStorage.setItem("AUTH_TOKEN", jwt);
-    currentChatId = null;
-    updateAuthNav();
-    show("home");
-    showToast("Logged in successfully! 😉", "login");
-
-
-
-if(response.status===200 || response.status ==201){
-print("succesfully login 😉")  
-
+    // // ✅ EXACT SAME BEHAVIOUR AS GOOGLE LOGIN
+    // localStorage.setItem("AUTH_TOKEN", jwt);
+const data = await response.json();
+// accept whichever key the server returns (access_token is preferred)
+const token = data.access_token || data.jwt || data.token;
+if (token) {
+  localStorage.setItem("AUTH_TOKEN", token);
+  console.log("Saved AUTH_TOKEN:", token.slice(0, 20) + "...");
+  currentChatId = null;
+  updateAuthNav();
+  show("home");
+  showToast("Logged in successfully! 😉", "login");
+} else {
+  // no token returned — show error
+  showToast(data.detail || "Login failed (no token returned)", "error");
 }
-else{
-  showToast(data.detail ||'login failed ❌' , 'error')
-}
+
+
+
+    // currentChatId = null;
+    // updateAuthNav();
+    // show("home");
+    // showToast("Logged in successfully! 😉", "login");
+
+
+
+// if(response.status===200 || response.status ==201){
+// print("succesfully login 😉")  
+
+// }
+// else{
+//   showToast(data.detail ||'login failed ❌' , 'error')
+// }
 
 } );
 
@@ -1416,6 +1476,8 @@ menu.querySelector(".rename-btn").onclick = async () => {
     // Delete
     menu.querySelector(".delete-btn").onclick = async () => {
       if (!confirm("Delete this chat?")) return;
+            sessionIdEl.value ="";  
+
       menu.style.display = "none";
       chatDiv.remove();
       try {
@@ -1524,6 +1586,7 @@ if (clearAllBtn) {
 
     // Clear all chats from UI
     chatList.innerHTML = "";
+    sessionIdEl.value = "";
 
     // (Optional) tell backend to clear all
     try {
