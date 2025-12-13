@@ -3,6 +3,7 @@ A lightweight, offline-capable **Retrieval-Augmented Generation (RAG)** chat sys
 
 This project is designed for developers, teams, and small organizations who want a **secure and easy-to-deploy RAG solution** without cloud dependency.
 
+📌Live : https://uddavgoshika.github.io/Nebula/
 ---
   <img src="https://github.com/UddavGoshika/Nebula/blob/main/Screenshot%202025-12-13%20013302.png" width="500" alt="Demo GIF"> <img src="https://github.com/UddavGoshika/Nebula/blob/main/Screenshot%202025-12-13%20013541.png" width="500" alt="Demo GIF">
   
