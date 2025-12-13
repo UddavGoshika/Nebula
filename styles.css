@@ -171,7 +171,7 @@
         .bubble-ai  {
             
         align-self: flex-start;
-            background: linear-gradient(135deg, #d8dad3a5, #5f6160d7);
+            background:linear-gradient(130deg ,rgb(84, 82, 82), black);
   color: #e5e7eb;
   border-radius: 18px 18px 0px 18px;
   backdrop-filter: blur(10px);
@@ -954,7 +954,11 @@
 
         border-radius:0px 0px 8px 8px;
     }
+ .ragana h3{
 
+  margin-bottom: 22px;
+  
+} 
 
 
         .chat-menu {
@@ -1156,3 +1160,83 @@
     animation: pulse 4s infinite;
     }
 
+
+    .about-section {
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 16px;
+  color: #fff;
+  font-family: "Poppins", sans-serif;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  padding: 24px;
+}
+
+.about-section h3 {
+  font-size: 1.8rem;
+  margin-bottom: 12px;
+  font-weight: 600;
+  border-bottom: 2px solid rgba(255,255,255,0.3);
+  display: inline-block;
+  padding-bottom: 6px;
+}
+
+.about-section p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-top: 10px;
+  opacity: 0.9;
+}
+
+.about-stats {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.about-stats .stat {
+  flex: 1;
+  background: rgba(255,255,255,0.15);
+  padding: 12px;
+  border-radius: 12px;
+  text-align: center;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.about-stats .stat:hover {
+  transform: translateY(-5px);
+  background: rgba(70, 60, 141, 0.966);
+}
+
+.about-stats h4 {
+  font-size: 1.4rem;
+  margin-bottom: 4px;
+}
+
+.about-footer {
+  margin-top: 15px;
+  font-size: 0.95rem;
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.skeleton {
+      position: relative;
+      overflow: hidden;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      margin: 8px 0;
+    }
+    .skeleton::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transform: translateX(-100%);
+      animation: shimmer 1.5s infinite;
+    }
+    @keyframes shimmer {
+      100% { transform: translateX(100%); }
+    }
+        .skeleton-title { height: 22px; width: 60%; margin-bottom: 10px; }
